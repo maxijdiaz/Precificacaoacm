@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#154360">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pricing Fachadas">
+<link rel="manifest" href="manifest.json">
+<title>App Android — Pricing Revitalização</title>
+<style>
+  :root {
+    --primary: #1b4f72;
+    --primary-dark: #154360;
+    --primary-light: #ebf5fb;
+    --accent: #2e86c1;
+    --success: #1e8449;
+    --success-bg: #eafaf1;
+    --warning: #d68910;
+    --warning-bg: #fef9e7;
+    --edit-bg: #fcf3cf;
+    --edit-border: #f1c40f;
+    --danger: #c0392b;
+    --danger-bg: #fdedec;
+    --bg: #f0f3f6;
+    --card: #ffffff;
+    --text: #1c2833;
+    --muted: #566573;
+    --border: #d5dbdb;
+    --radius: 14px;
+    --shadow: 0 2px 8px rgba(21, 67, 96, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 82px; /* Espaço para Bottom Nav */
+    overflow-x: hidden;
+  }
+
+  /* Android Top App Bar */
+  .app-bar {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: #fff;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .app-bar-title h1 { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.2px; }
+  .app-bar-title span { font-size: 0.74rem; opacity: 0.85; display: block; }
+  .app-bar-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .icon-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.3); }
+
+  /* Sticky Live Summary Banner on Mobile */
+  .live-banner {
+    background: #fff;
+    border-bottom: 2px solid var(--border);
+    padding: 10px 14px;
+    position: sticky;
+    top: 56px;
+    z-index: 190;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .live-main { display: flex; flex-direction: column; }
+  .live-main small { font-size: 0.68rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .live-main strong { font-size: 1.3rem; color: var(--success); font-weight: 800; }
+  .live-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .pill {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  .pill.floor { background: var(--warning-bg); color: var(--warning); }
+
+  .container { max-width: 960px; margin: 12px auto; padding: 0 12px; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 15px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid #e5e8e8;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--primary-light);
+  }
+  .card-title { font-size: 0.95rem; font-weight: 800; color: var(--primary-dark); }
+
+  /* KPI Grid Mobile */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (min-width: 700px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+  .kpi-box {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+  }
+  .kpi-box.green { border-left-color: #27ae60; }
+  .kpi-box.orange { border-left-color: #e67e22; }
+  .kpi-box.red { border-left-color: #c0392b; }
+  .kpi-box.purple { border-left-color: #8e44ad; }
+  .kpi-lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--muted); }
+  .kpi-val { font-size: 1.2rem; font-weight: 800; margin: 4px 0 2px; color: var(--text); }
+  .kpi-sub { font-size: 0.74rem; color: var(--muted); font-weight: 600; }
+
+  /* Stacked Bar */
+  .stacked-bar {
+    height: 30px;
+    width: 100%;
+    background: #eaecee;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    margin: 6px 0 10px;
+  }
+  .bar-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    transition: width 0.2s;
+    overflow: hidden;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    font-size: 0.76rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; background: #f8f9f9; padding: 5px 8px; border-radius: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Touch-Friendly Controls */
+  .field-group {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f3f4;
+  }
+  .field-group:last-child { border-bottom: none; }
+  .field-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 8px;
+  }
+  .field-label { font-size: 0.86rem; font-weight: 700; color: var(--text); }
+  .field-label small { display: block; font-size: 0.73rem; color: var(--muted); font-weight: 400; }
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .step-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #f4f6f7;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    cursor: pointer;
+  }
+  .step-btn:active { background: var(--primary-light); }
+  .edit-input {
+    width: 92px;
+    height: 34px;
+    padding: 4px 8px;
+    border: 1.5px solid #d4ac0d;
+    background: var(--edit-bg);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--text);
+    text-align: right;
+  }
+  .edit-text { width: 100%; text-align: left; height: 38px; }
+  input[type="range"] { width: 100%; height: 6px; accent-color: var(--primary); margin-top: 4px; }
+
+  /* Mobile Item List Cards (for Stages, Products, Expenses) */
+  .item-row {
+    background: #f8f9fa;
+    border: 1px solid #e5e8e8;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  .item-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .item-row-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    align-items: center;
+    font-size: 0.76rem;
+  }
+  .item-row-grid small { display: block; color: var(--muted); font-size: 0.68rem; }
+  .calc-badge {
+    background: var(--success-bg);
+    color: var(--success);
+    font-weight: 800;
+    padding: 5px 8px;
+    border-radius: 6px;
+    text-align: right;
+    font-size: 0.82rem;
+  }
+
+  /* Buttons */
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-block { width: 100%; margin-top: 8px; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-whatsapp { background: #25D366; color: #fff; font-size: 0.95rem; padding: 13px; box-shadow: 0 3px 10px rgba(37,211,102,0.3); }
+  .btn-warning { background: #f39c12; color: #fff; }
+  .btn-danger-sm { background: var(--danger-bg); color: var(--danger); border: 1px solid #f5b7b1; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+
+  /* Bottom Navigation Bar (Android Material 3) */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 66px;
+    background: #ffffff;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    z-index: 300;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+  }
+  .nav-item {
+    border: none;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    cursor: pointer;
+    gap: 3px;
+  }
+  .nav-item .nav-icon {
+    font-size: 1.15rem;
+    padding: 2px 14px;
+    border-radius: 14px;
+    transition: all 0.15s;
+  }
+  .nav-item.active { color: var(--primary-dark); }
+  .nav-item.active .nav-icon { background: var(--primary-light); }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- TOP APP BAR -->
+<div class="app-bar">
+  <div class="app-bar-title">
+    <h1>Pricing Revitalização</h1>
+    <span id="header_subtitle">Modo App Android • Offline Ativo</span>
+  </div>
+  <div class="app-bar-actions">
+    <button class="icon-btn" onclick="saveCurrentToHistory()" title="Salvar no Histórico do Celular">💾 Salvar</button>
+    <button class="icon-btn" onclick="resetToOriginalSpreadsheet()" title="Restaurar Padrão 85m²">↺ 85m²</button>
+  </div>
+</div>
+
+<!-- STICKY LIVE BAR (SEMPRE VISÍVEL ENQUANTO EDITA) -->
+<div class="live-banner">
+  <div class="live-main">
+    <small>Preço de Venda Sugerido</small>
+    <strong id="top_preco_final">R$ 8.658,02</strong>
+  </div>
+  <div class="live-pills">
+    <span class="pill" id="top_preco_m2">R$ 101,86/m²</span>
+    <span class="pill floor" id="top_preco_piso">Piso: R$ 2.509</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ABA 1: DASHBOARD & SIMULADOR RÁPIDO -->
+  <div id="pane_dash" class="tab-pane active">
+    <div class="kpi-grid">
+      <div class="kpi-box green">
+        <div class="kpi-lbl">Preço Final (PV)</div>
+        <div class="kpi-val" id="kpi_pv">R$ 8.658,02</div>
+        <div class="kpi-sub" id="kpi_pv_m2">R$ 101,86 / m²</div>
+      </div>
+      <div class="kpi-box orange">
+        <div class="kpi-lbl">Preço Piso (Recusa)</div>
+        <div class="kpi-val" id="kpi_piso">R$ 2.508,86</div>
+        <div class="kpi-sub" id="kpi_piso_m2">R$ 29,52 / m²</div>
+      </div>
+      <div class="kpi-box red">
+        <div class="kpi-lbl">Custo Direto (CDV)</div>
+        <div class="kpi-val" id="kpi_cdv">R$ 2.207,80</div>
+        <div class="kpi-sub" id="kpi_cdv_m2">R$ 25,97 / m²</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-lbl">Margem Contribuição</div>
+        <div class="kpi-val" id="kpi_mc">R$ 7.353,01</div>
+        <div class="kpi-sub" id="kpi_mc_cob">53,6% do Custo Fixo</div>
+      </div>
+      <div class="kpi-box green">
+        <div class="kpi-lbl">Lucro Líquido Real</div>
+        <div class="kpi-val" id="kpi_lucro">R$ 5.411,27</div>
+        <div class="kpi-sub" id="kpi_lucro_pct">62,5% Líquido</div>
+      </div>
+      <div class="kpi-box purple">
+        <div class="kpi-lbl">Tempo & Equipe</div>
+        <div class="kpi-val" id="kpi_horas">42,50 h</div>
+        <div class="kpi-sub" id="kpi_dias">4,25 dias • R$ 45,69/h</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📊 Decomposição do Preço vs. Piso</span>
+      </div>
+      <div class="stacked-bar">
+        <div class="bar-seg" id="seg_mo" style="background:#2e86c1; width:22%">22%</div>
+        <div class="bar-seg" id="seg_mp" style="background:#17a589; width:3%">3%</div>
+        <div class="bar-seg" id="seg_terc" style="background:#8e44ad; width:0%"></div>
+        <div class="bar-seg" id="seg_imp" style="background:#e67e22; width:12%">12%</div>
+        <div class="bar-seg" id="seg_lucro" style="background:#27ae60; width:63%">63%</div>
+      </div>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="dot" style="background:#2e86c1"></span><span>MO: <strong id="leg_mo">R$ 1.941,75</strong></span></div>
+        <div class="legend-item"><span class="dot" style="background:#17a589"></span><span>Quím: <strong id="leg_mp">R$ 266,05</strong></span></div>
+        <div class="legend-item"><span class="dot" style="background:#8e44ad"></span><span>Logíst: <strong id="leg_terc">R$ 0,00</strong></span></div>
+        <div class="legend-item"><span class="dot" style="background:#e67e22"></span><span>Imp/Tx: <strong id="leg_imp">R$ 1.038,96</strong></span></div>
+        <div class="legend-item" style="grid-column: span 2;"><span class="dot" style="background:#27ae60"></span><span>Lucro Líquido: <strong id="leg_lucro">R$ 5.411,27</strong></span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⚙️ Peso e Faturamento por Etapa</span>
+      </div>
+      <div id="stages_chart_box"></div>
+    </div>
+  </div>
+
+  <!-- ABA 2: PARÂMETROS DE CAMPO, ETAPAS, LOGÍSTICA E MARKUP -->
+  <div id="pane_orcamento" class="tab-pane">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📐 Geometria e Complexidade da Obra</span>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label" style="margin-bottom:6px;">Nome do Cliente / Obra / Cidade</div>
+        <input type="text" class="edit-input edit-text" id="inp_cliente" value="Projeto Base Planilha (85 m²)" oninput="recalcAll()">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Área por Fachada (m²)<small>Use os botões ou o controle deslizante</small></div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_area_unit','sl_area_unit',-5)">-</button>
+            <input type="number" class="edit-input" id="inp_area_unit" value="85" step="1" oninput="syncInput('inp_area_unit','sl_area_unit')">
+            <button class="step-btn" onclick="stepVal('inp_area_unit','sl_area_unit',5)">+</button>
+          </div>
+        </div>
+        <input type="range" min="10" max="1200" step="5" id="sl_area_unit" value="85" oninput="syncSlider('sl_area_unit','inp_area_unit')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Qtd. de Módulos / Fachadas<small id="lbl_area_total">Área Total: 85,0 m²</small></div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_qtd_mod','sl_qtd_mod',-1)">-</button>
+            <input type="number" class="edit-input" id="inp_qtd_mod" value="1" min="1" step="1" oninput="syncInput('inp_qtd_mod','sl_qtd_mod')">
+            <button class="step-btn" onclick="stepVal('inp_qtd_mod','sl_qtd_mod',1)">+</button>
+          </div>
+        </div>
+        <input type="range" min="1" max="15" step="1" id="sl_qtd_mod" value="1" oninput="syncSlider('sl_qtd_mod','inp_qtd_mod')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Horas Efetivas por Dia (h/dia)<small>Padrão planilha: 5,0 h/dia</small></div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_horas_dia','sl_horas_dia',-0.5)">-</button>
+            <input type="number" class="edit-input" id="inp_horas_dia" value="5" step="0.5" oninput="syncInput('inp_horas_dia','sl_horas_dia')">
+            <button class="step-btn" onclick="stepVal('inp_horas_dia','sl_horas_dia',0.5)">+</button>
+          </div>
+        </div>
+        <input type="range" min="3" max="10" step="0.5" id="sl_horas_dia" value="5" oninput="syncSlider('sl_horas_dia','inp_horas_dia')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Técnicos na Obra<small>Calcula dias de calendário da equipe</small></div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_tecnicos_obra','sl_tecnicos_obra',-1)">-</button>
+            <input type="number" class="edit-input" id="inp_tecnicos_obra" value="2" min="1" step="1" oninput="syncInput('inp_tecnicos_obra','sl_tecnicos_obra')">
+            <button class="step-btn" onclick="stepVal('inp_tecnicos_obra','sl_tecnicos_obra',1)">+</button>
+          </div>
+        </div>
+        <input type="range" min="1" max="6" step="1" id="sl_tecnicos_obra" value="2" oninput="syncSlider('sl_tecnicos_obra','inp_tecnicos_obra')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Fator Dificuldade Acesso / Altura<small>1.00=Solo | 1.20=Andaime | 1.35=PTA</small></div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_fat_acesso','sl_fat_acesso',-0.05)">-</button>
+            <input type="number" class="edit-input" id="inp_fat_acesso" value="1.00" step="0.05" oninput="syncInput('inp_fat_acesso','sl_fat_acesso')">
+            <button class="step-btn" onclick="stepVal('inp_fat_acesso','sl_fat_acesso',0.05)">+</button>
+          </div>
+        </div>
+        <input type="range" min="0.80" max="1.80" step="0.05" id="sl_fat_acesso" value="1.00" oninput="syncSlider('sl_fat_acesso','inp_fat_acesso')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Fator Severidade da Patologia<small>0.85=Leve | 1.00=Padrão | 1.30=Severo</small></div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_fat_sev','sl_fat_sev',-0.05)">-</button>
+            <input type="number" class="edit-input" id="inp_fat_sev" value="1.00" step="0.05" oninput="syncInput('inp_fat_sev','sl_fat_sev')">
+            <button class="step-btn" onclick="stepVal('inp_fat_sev','sl_fat_sev',0.05)">+</button>
+          </div>
+        </div>
+        <input type="range" min="0.75" max="1.80" step="0.05" id="sl_fat_sev" value="1.00" oninput="syncSlider('sl_fat_sev','inp_fat_sev')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">
+            Fator Economia de Escala (m²)
+            <small><label><input type="checkbox" id="chk_escala_auto" onchange="recalcAll()"> Automático por Faixa de m²</label></small>
+          </div>
+          <div class="stepper">
+            <button class="step-btn" onclick="stepVal('inp_fat_escala','sl_fat_escala',-0.02)">-</button>
+            <input type="number" class="edit-input" id="inp_fat_escala" value="1.00" step="0.02" oninput="syncInput('inp_fat_escala','sl_fat_escala')">
+            <button class="step-btn" onclick="stepVal('inp_fat_escala','sl_fat_escala',0.02)">+</button>
+          </div>
+        </div>
+        <input type="range" min="0.70" max="1.30" step="0.01" id="sl_fat_escala" value="1.00" oninput="syncSlider('sl_fat_escala','inp_fat_escala')">
+      </div>
+    </div>
+
+    <!-- Etapas de Mão de Obra -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">👷 Produtividade por Etapa (m²/h)</span>
+        <button class="btn-danger-sm" style="background:var(--primary-light); color:var(--primary); border:none;" onclick="addStageRow()">+ Etapa</button>
+      </div>
+      <div id="list_etapas"></div>
+    </div>
+
+    <!-- Logística e Acesso -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🚛 Terceirização, PTA e Logística</span>
+        <button class="btn-danger-sm" style="background:var(--primary-light); color:var(--primary); border:none;" onclick="addLogisticsRow()">+ Item</button>
+      </div>
+      <div id="list_logistica"></div>
+    </div>
+
+    <!-- Markup e Impostos -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💰 Impostos, Comissões e Margem Alvo</span>
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Impostos Nota Fiscal (%)</div>
+          <input type="number" class="edit-input" id="inp_impostos" value="12.0" step="0.5" oninput="syncInput('inp_impostos','sl_impostos')">
+        </div>
+        <input type="range" min="0" max="25" step="0.5" id="sl_impostos" value="12.0" oninput="syncSlider('sl_impostos','inp_impostos')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Comissão Comercial (%)</div>
+          <input type="number" class="edit-input" id="inp_comissao" value="0.0" step="0.5" oninput="syncInput('inp_comissao','sl_comissao')">
+        </div>
+        <input type="range" min="0" max="20" step="0.5" id="sl_comissao" value="0.0" oninput="syncSlider('sl_comissao','inp_comissao')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Previsão Desconto / Taxa Cobrança (%)</div>
+          <input type="number" class="edit-input" id="inp_desconto" value="0.0" step="0.5" oninput="syncInput('inp_desconto','sl_desconto')">
+        </div>
+        <input type="range" min="0" max="20" step="0.5" id="sl_desconto" value="0.0" oninput="syncSlider('sl_desconto','inp_desconto')">
+      </div>
+
+      <div class="field-group">
+        <div class="field-top">
+          <div class="field-label">Margem de Lucro Líquido Alvo (%)</div>
+          <input type="number" class="edit-input" id="inp_lucro" value="62.5" step="0.5" oninput="syncInput('inp_lucro','sl_lucro')">
+        </div>
+        <input type="range" min="5" max="75" step="0.5" id="sl_lucro" value="62.5" oninput="syncSlider('sl_lucro','inp_lucro')">
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 3: PRODUTOS QUÍMICOS -->
+  <div id="pane_produtos" class="tab-pane">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🧪 Predefinições Rápidas de Químicos</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+        <button class="btn btn-primary" onclick="setChemicalPreset('original_266')">1. Padrão Aba Orçamento (R$ 266,05 p/ 85m²)</button>
+        <button class="btn btn-warning" onclick="setChemicalPreset('kit_padrao_7')">2. Kit 7 Produtos Vonixx (R$ 2,56 / m²)</button>
+        <button class="btn" style="background:#17a589; color:#fff;" onclick="setChemicalPreset('todos_9')">3. Todos os 9 Produtos Ativos (R$ 5,66 / m²)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Fator Absorção Química (ml/m²)</span>
+        <input type="number" class="edit-input" id="inp_fat_quim" value="1.00" step="0.05" oninput="recalcAll()">
+      </div>
+      <div id="list_produtos"></div>
+      <button class="btn btn-primary btn-block" onclick="addProductRow()">+ Adicionar Produto Químico</button>
+    </div>
+  </div>
+
+  <!-- ABA 4: VALOR-HORA (CUSTOS FIXOS, SALÁRIOS, DEPRECIAÇÃO) -->
+  <div id="pane_vh" class="tab-pane">
+    <div class="card" style="border-left:5px solid var(--primary);">
+      <div class="field-top">
+        <div>
+          <div class="kpi-lbl">Valor-Hora Técnica Calculado</div>
+          <div class="kpi-val" id="vh_top_val" style="color:var(--primary)">R$ 45,69 / h</div>
+          <div class="kpi-sub" id="vh_top_sub">Custo Fixo: R$ 13.706,44 ÷ 300h</div>
+        </div>
+        <div style="text-align:right;">
+          <label style="font-size:0.75rem; font-weight:700; display:block; margin-bottom:4px;">
+            <input type="checkbox" id="chk_vh_manual" onchange="recalcAll()"> Travar Manual:
+          </label>
+          <input type="number" class="edit-input" id="inp_vh_manual" value="45.69" step="0.5" oninput="recalcAll()">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">👥 Folha, Encargos e Capacidade</span>
+        <button class="btn-danger-sm" style="background:var(--primary-light); color:var(--primary); border:none;" onclick="addSalaryRow()">+ Cargo</button>
+      </div>
+      <div id="list_salarios"></div>
+      <div class="field-group">
+        <div class="field-top">
+          <span class="field-label">Multiplicador de Encargos (1.45 = +45%)</span>
+          <input type="number" class="edit-input" id="inp_encargos_mult" value="1.45" step="0.05" oninput="recalcAll()">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-top">
+          <span class="field-label">Nº Operadores em Campo</span>
+          <input type="number" class="edit-input" id="inp_num_operadores_mes" value="2" step="1" oninput="recalcAll()">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-top">
+          <span class="field-label">Horas Produtivas / Operador / Mês</span>
+          <input type="number" class="edit-input" id="inp_horas_op_mes" value="150" step="5" oninput="recalcAll()">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🏢 Despesas Fixas Mensais</span>
+        <button class="btn-danger-sm" style="background:var(--primary-light); color:var(--primary); border:none;" onclick="addExpenseRow()">+ Despesa</button>
+      </div>
+      <div id="list_despesas"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔧 Depreciação de Equipamentos</span>
+        <button class="btn-danger-sm" style="background:var(--primary-light); color:var(--primary); border:none;" onclick="addEquipRow()">+ Equip.</button>
+      </div>
+      <div id="list_equipamentos"></div>
+    </div>
+  </div>
+
+  <!-- ABA 5: PROPOSTA WHATSAPP & HISTÓRICO SALVO NO CELULAR -->
+  <div id="pane_proposta" class="tab-pane">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📲 Enviar Orçamento em 3 Opções no WhatsApp</span>
+      </div>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">
+        Gera o resumo comercial estruturado com ancoragem em 3 níveis e condições de pagamento (40% sinal) pronto para enviar ao cliente no WhatsApp:
+      </p>
+      <textarea id="wa_preview" rows="11" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--border); font-family:inherit; font-size:0.82rem; background:#f8f9fa; margin-bottom:10px;"></textarea>
+      <button class="btn btn-whatsapp btn-block" onclick="shareWhatsApp()">📲 Compartilhar / Enviar no WhatsApp</button>
+      <button class="btn btn-primary btn-block" onclick="copyProposalText()">📋 Copiar Texto da Proposta</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🗂 Orçamentos Salvos no Aparelho</span>
+      </div>
+      <div id="saved_history_list" style="font-size:0.83rem; color:var(--muted);">Nenhum orçamento salvo ainda. Toque em "💾 Salvar" no topo para guardar cenários de clientes.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ANDROID BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="switchNav('pane_dash', this)">
+    <span class="nav-icon">📊</span>
+    <span>Painel</span>
+  </button>
+  <button class="nav-item" onclick="switchNav('pane_orcamento', this)">
+    <span class="nav-icon">📐</span>
+    <span>Orçamento</span>
+  </button>
+  <button class="nav-item" onclick="switchNav('pane_produtos', this)">
+    <span class="nav-icon">🧪</span>
+    <span>Químicos</span>
+  </button>
+  <button class="nav-item" onclick="switchNav('pane_vh', this)">
+    <span class="nav-icon">⏱️</span>
+    <span>Valor-Hora</span>
+  </button>
+  <button class="nav-item" onclick="switchNav('pane_proposta', this)">
+    <span class="nav-icon">📲</span>
+    <span>Proposta</span>
+  </button>
+</nav>
+
+<script>
+const DEFAULT_STATE = {
+  cliente: "Projeto Base Planilha (85 m²)",
+  qtd_mod: 1,
+  area_unit: 85,
+  horas_dia: 5,
+  tecnicos_obra: 2,
+  fat_acesso: 1.00,
+  fat_sev: 1.00,
+  fat_quim: 1.00,
+  fat_escala: 1.00,
+  escala_auto: false,
+  impostos: 12.0,
+  comissao: 0.0,
+  desconto: 0.0,
+  lucro: 62.5,
+  vh_manual_ativo: false,
+  vh_manual_valor: 45.69,
+  encargos_mult: 1.45,
+  num_operadores_mes: 2,
+  horas_op_mes: 150,
+  etapas: [
+    { ativo: true, nome: "Higienização", prod: 20.0 },
+    { ativo: true, nome: "Descontaminação", prod: 20.0 },
+    { ativo: true, nome: "Polimento / Restauração ACM", prod: 3.0 },
+    { ativo: true, nome: "Proteção UV / Vitrificação", prod: 15.0 }
+  ],
+  logistica: [
+    { ativo: false, nome: "Plataforma Elevatória (PTA) / Andaime", qtd: 1, unit: 0.0 },
+    { ativo: false, nome: "Frete / Mobilização", qtd: 1, unit: 0.0 },
+    { ativo: false, nome: "Combustível / Viagem Outra Cidade", qtd: 1, unit: 0.0 },
+    { ativo: false, nome: "Hotel e Diárias Equipe", qtd: 1, unit: 0.0 }
+  ],
+  produtos: [
+    { ativo: true, nome: "V-Floc", cod: "FLC", emb: 500, preco: 125.00, rend: 2.0 },
+    { ativo: true, nome: "Revelax", cod: "RVX", emb: 500, preco: 60.00, rend: 8.0 },
+    { ativo: true, nome: "Blend All in One", cod: "BLD", emb: 500, preco: 130.00, rend: 2.0 },
+    { ativo: true, nome: "Blend Paste Wax", cod: "BPW", emb: 100, preco: 130.00, rend: 0.5 },
+    { ativo: false, nome: "Delete", cod: "DLT", emb: 500, preco: 60.00, rend: 3.0 },
+    { ativo: false, nome: "Hydro2", cod: "HY2", emb: 1000, preco: 800.00, rend: 2.0 },
+    { ativo: true, nome: "Fast Cut", cod: "FCT", emb: 1000, preco: 250.00, rend: 2.0 },
+    { ativo: false, nome: "Pluri Mol", cod: "MOL", emb: 500, preco: 60.00, rend: 1.0 },
+    { ativo: false, nome: "CMX Mother's", cod: "CMX", emb: 710, preco: 300.00, rend: 3.55 }
+  ],
+  despesas: [
+    { nome: "Aluguel", valor: 1400 },
+    { nome: "Pró-labore", valor: 3000 },
+    { nome: "Andaimes", valor: 600 },
+    { nome: "Material para operação", valor: 600 },
+    { nome: "Combustíveis", valor: 500 },
+    { nome: "Reserva", valor: 500 },
+    { nome: "Contador", valor: 300 },
+    { nome: "Marketing", valor: 200 },
+    { nome: "Impostos Fixos", valor: 180 },
+    { nome: "Manutenções Equipamentos", valor: 100 },
+    { nome: "Telefone / Internet", valor: 100 },
+    { nome: "Água", valor: 50 },
+    { nome: "Despesas Bancárias", valor: 50 }
+  ],
+  salarios: [
+    { nome: "Lucas (Operador)", valor: 2000 },
+    { nome: "Laelson (Operador)", valor: 2000 }
+  ],
+  equipamentos: [
+    { nome: "Lavadora (Stihl)", compra: 2100, vida: 36 },
+    { nome: "Furadeiras (Bosch)", compra: 1100, vida: 36 },
+    { nome: "Politriz 5\" (Vonixx)", compra: 1700, vida: 36 },
+    { nome: "Escada Alum. 11 degraus", compra: 986, vida: 36 },
+    { nome: "Mangueira 50mts", compra: 300, vida: 36 },
+    { nome: "Extensões Elétricas (20m/30m/50m/4m)", compra: 810, vida: 36 },
+    { nome: "Extensores + Adaptadores", compra: 1050, vida: 36 },
+    { nome: "Panos (12) + Boinas (8)", compra: 1026, vida: 36 },
+    { nome: "Cintos (3) + Capacetes (3)", compra: 1860, vida: 36 },
+    { nome: "Mangueira 20mts", compra: 120, vida: 36 },
+    { nome: "Lixadeira roto orbital", compra: 700, vida: 36 }
+  ],
+  faixas_escala: [
+    { min_m2: 0, fator: 1.15 },
+    { min_m2: 50, fator: 1.00 },
+    { min_m2: 100, fator: 0.92 },
+    { min_m2: 200, fator: 0.85 },
+    { min_m2: 400, fator: 0.78 }
+  ]
+};
+
+let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+function fmtBRL(v) { return (isFinite(v) ? v : 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+function fmtNum(v, d=2) { return (isFinite(v) ? v : 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+
+function switchNav(paneId, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById(paneId).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function syncSlider(slId, inpId) {
+  document.getElementById(inpId).value = document.getElementById(slId).value;
+  recalcAll();
+}
+function syncInput(inpId, slId) {
+  document.getElementById(slId).value = document.getElementById(inpId).value;
+  recalcAll();
+}
+function stepVal(inpId, slId, delta) {
+  const inp = document.getElementById(inpId);
+  const current = parseFloat(inp.value) || 0;
+  const next = Math.max(0.1, +(current + delta).toFixed(2));
+  inp.value = next;
+  if (slId && document.getElementById(slId)) document.getElementById(slId).value = next;
+  recalcAll();
+}
+
+function renderLists() {
+  // Etapas
+  const boxEt = document.getElementById('list_etapas');
+  boxEt.innerHTML = '';
+  state.etapas.forEach((et, i) => {
+    boxEt.innerHTML += `
+      <div class="item-row">
+        <div class="item-row-top">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.86rem; flex:1;">
+            <input type="checkbox" style="width:18px; height:18px;" ${et.ativo ? 'checked' : ''} onchange="state.etapas[${i}].ativo=this.checked; recalcAll()">
+            <input type="text" class="edit-input edit-text" style="height:32px;" value="${et.nome}" oninput="state.etapas[${i}].nome=this.value; recalcAll()">
+          </label>
+          <button class="btn-danger-sm" onclick="state.etapas.splice(${i},1); renderLists(); recalcAll()">✕</button>
+        </div>
+        <div class="item-row-grid">
+          <div><small>Produtiv. (m²/h)</small><input type="number" class="edit-input" style="width:100%" value="${et.prod}" step="0.5" oninput="state.etapas[${i}].prod=parseFloat(this.value)||0.1; recalcAll()"></div>
+          <div><small>Horas Etapa</small><div class="calc-badge" id="m_et_h_${i}">0,0h</div></div>
+          <div><small>Custo MO</small><div class="calc-badge" id="m_et_c_${i}">R$ 0</div></div>
+        </div>
+      </div>`;
+  });
+
+  // Logística
+  const boxLg = document.getElementById('list_logistica');
+  boxLg.innerHTML = '';
+  state.logistica.forEach((lg, i) => {
+    boxLg.innerHTML += `
+      <div class="item-row">
+        <div class="item-row-top">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.85rem; flex:1;">
+            <input type="checkbox" style="width:18px; height:18px;" ${lg.ativo ? 'checked' : ''} onchange="state.logistica[${i}].ativo=this.checked; recalcAll()">
+            <input type="text" class="edit-input edit-text" style="height:32px;" value="${lg.nome}" oninput="state.logistica[${i}].nome=this.value">
+          </label>
+          <button class="btn-danger-sm" onclick="state.logistica.splice(${i},1); renderLists(); recalcAll()">✕</button>
+        </div>
+        <div class="item-row-grid">
+          <div><small>Qtd / Diárias</small><input type="number" class="edit-input" style="width:100%" value="${lg.qtd}" step="1" oninput="state.logistica[${i}].qtd=parseFloat(this.value)||0; recalcAll()"></div>
+          <div><small>R$ Unitário</small><input type="number" class="edit-input" style="width:100%" value="${lg.unit}" step="25" oninput="state.logistica[${i}].unit=parseFloat(this.value)||0; recalcAll()"></div>
+          <div><small>Subtotal</small><div class="calc-badge" id="m_lg_t_${i}">R$ 0</div></div>
+        </div>
+      </div>`;
+  });
+
+  // Produtos
+  const boxPr = document.getElementById('list_produtos');
+  boxPr.innerHTML = '';
+  state.produtos.forEach((pr, i) => {
+    boxPr.innerHTML += `
+      <div class="item-row">
+        <div class="item-row-top">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.86rem; flex:1;">
+            <input type="checkbox" style="width:18px; height:18px;" ${pr.ativo ? 'checked' : ''} onchange="state.produtos[${i}].ativo=this.checked; recalcAll()">
+            <input type="text" class="edit-input edit-text" style="height:32px;" value="${pr.nome} (${pr.cod})" oninput="state.produtos[${i}].nome=this.value">
+          </label>
+          <button class="btn-danger-sm" onclick="state.produtos.splice(${i},1); renderLists(); recalcAll()">✕</button>
+        </div>
+        <div class="item-row-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div><small>Emb (ml/g)</small><input type="number" class="edit-input" style="width:100%" value="${pr.emb}" oninput="state.produtos[${i}].emb=parseFloat(this.value)||1; recalcAll()"></div>
+          <div><small>Preço (R$)</small><input type="number" class="edit-input" style="width:100%" value="${pr.preco}" oninput="state.produtos[${i}].preco=parseFloat(this.value)||0; recalcAll()"></div>
+          <div><small>Rend (ml/m²)</small><input type="number" class="edit-input" style="width:100%" value="${pr.rend}" step="0.5" oninput="state.produtos[${i}].rend=parseFloat(this.value)||0; recalcAll()"></div>
+          <div><small>Custo Obra</small><div class="calc-badge" id="m_pr_c_${i}">R$ 0</div></div>
+        </div>
+      </div>`;
+  });
+
+  // Salários
+  const boxSal = document.getElementById('list_salarios');
+  boxSal.innerHTML = '';
+  state.salarios.forEach((s, i) => {
+    boxSal.innerHTML += `
+      <div class="field-group" style="display:flex; gap:8px; align-items:center;">
+        <input type="text" class="edit-input edit-text" style="flex:1" value="${s.nome}" oninput="state.salarios[${i}].nome=this.value">
+        <input type="number" class="edit-input" style="width:110px" value="${s.valor}" step="100" oninput="state.salarios[${i}].valor=parseFloat(this.value)||0; recalcAll()">
+        <button class="btn-danger-sm" onclick="state.salarios.splice(${i},1); renderLists(); recalcAll()">✕</button>
+      </div>`;
+  });
+
+  // Despesas
+  const boxDesp = document.getElementById('list_despesas');
+  boxDesp.innerHTML = '';
+  state.despesas.forEach((d, i) => {
+    boxDesp.innerHTML += `
+      <div class="field-group" style="display:flex; gap:8px; align-items:center;">
+        <input type="text" class="edit-input edit-text" style="flex:1" value="${d.nome}" oninput="state.despesas[${i}].nome=this.value">
+        <input type="number" class="edit-input" style="width:105px" value="${d.valor}" step="25" oninput="state.despesas[${i}].valor=parseFloat(this.value)||0; recalcAll()">
+        <button class="btn-danger-sm" onclick="state.despesas.splice(${i},1); renderLists(); recalcAll()">✕</button>
+      </div>`;
+  });
+
+  // Equipamentos
+  const boxEq = document.getElementById('list_equipamentos');
+  boxEq.innerHTML = '';
+  state.equipamentos.forEach((eq, i) => {
+    boxEq.innerHTML += `
+      <div class="item-row">
+        <div class="item-row-top">
+          <input type="text" class="edit-input edit-text" style="height:32px; flex:1;" value="${eq.nome}" oninput="state.equipamentos[${i}].nome=this.value">
+          <button class="btn-danger-sm" onclick="state.equipamentos.splice(${i},1); renderLists(); recalcAll()">✕</button>
+        </div>
+        <div class="item-row-grid">
+          <div><small>Compra (R$)</small><input type="number" class="edit-input" style="width:100%" value="${eq.compra}" oninput="state.equipamentos[${i}].compra=parseFloat(this.value)||0; recalcAll()"></div>
+          <div><small>Vida (Meses)</small><input type="number" class="edit-input" style="width:100%" value="${eq.vida}" oninput="state.equipamentos[${i}].vida=parseFloat(this.value)||1; recalcAll()"></div>
+          <div><small>Deprec./Mês</small><div class="calc-badge" id="m_eq_d_${i}">R$ 0</div></div>
+        </div>
+      </div>`;
+  });
+}
+
+function recalcAll() {
+  const cliente = document.getElementById('inp_cliente').value || "Cliente";
+  const qtdMod = parseFloat(document.getElementById('inp_qtd_mod').value) || 1;
+  const areaUnit = parseFloat(document.getElementById('inp_area_unit').value) || 0;
+  const areaTotal = qtdMod * areaUnit;
+  document.getElementById('lbl_area_total').innerText = `Área Total: ${fmtNum(areaTotal, 1)} m²`;
+
+  const horasDia = parseFloat(document.getElementById('inp_horas_dia').value) || 5;
+  const tecnicosObra = parseFloat(document.getElementById('inp_tecnicos_obra').value) || 2;
+  const fatAcesso = parseFloat(document.getElementById('inp_fat_acesso').value) || 1;
+  const fatSev = parseFloat(document.getElementById('inp_fat_sev').value) || 1;
+  const fatQuim = parseFloat(document.getElementById('inp_fat_quim').value) || 1;
+
+  let fatEscala = parseFloat(document.getElementById('inp_fat_escala').value) || 1;
+  if (document.getElementById('chk_escala_auto').checked) {
+    let chosen = 1.0;
+    state.faixas_escala.forEach(fx => { if (areaTotal >= fx.min_m2) chosen = fx.fator; });
+    fatEscala = chosen;
+    document.getElementById('inp_fat_escala').value = fatEscala.toFixed(2);
+    document.getElementById('sl_fat_escala').value = fatEscala;
+  }
+
+  // Valor-Hora
+  let totDesp = 0; state.despesas.forEach(d => totDesp += (parseFloat(d.valor)||0));
+  let totSal = 0; state.salarios.forEach(s => totSal += (parseFloat(s.valor)||0));
+  const encMult = parseFloat(document.getElementById('inp_encargos_mult').value) || 1.45;
+  const totFolha = totSal * encMult;
+
+  let totDep = 0;
+  state.equipamentos.forEach((eq, i) => {
+    const dep = (parseFloat(eq.compra)||0) / Math.max(1, parseFloat(eq.vida)||36);
+    totDep += dep;
+    const el = document.getElementById(`m_eq_d_${i}`);
+    if (el) el.innerText = fmtBRL(dep);
+  });
+
+  const custoFixoTotal = totDesp + totFolha + totDep;
+  const capHoras = Math.max(1, (parseFloat(document.getElementById('inp_num_operadores_mes').value)||2) * (parseFloat(document.getElementById('inp_horas_op_mes').value)||150));
+  const vhCalc = custoFixoTotal / capHoras;
+  document.getElementById('vh_top_val').innerText = `${fmtBRL(vhCalc)} / h`;
+  document.getElementById('vh_top_sub').innerText = `Custo Fixo: ${fmtBRL(custoFixoTotal)} ÷ ${capHoras}h`;
+
+  const valorHora = document.getElementById('chk_vh_manual').checked ? (parseFloat(document.getElementById('inp_vh_manual').value)||vhCalc) : vhCalc;
+
+  // Químicos
+  let totProdCusto = 0;
+  state.produtos.forEach((pr, i) => {
+    const emb = Math.max(1, parseFloat(pr.emb)||500);
+    const preco = parseFloat(pr.preco)||0;
+    const rend = parseFloat(pr.rend)||0;
+    const needMl = pr.ativo ? (areaTotal * rend * fatQuim) : 0;
+    const custo = (needMl / emb) * preco;
+    if (pr.ativo) totProdCusto += custo;
+    const el = document.getElementById(`m_pr_c_${i}`);
+    if (el) el.innerText = fmtBRL(custo);
+  });
+
+  // Logística
+  let totLogistica = 0;
+  state.logistica.forEach((lg, i) => {
+    const sub = lg.ativo ? ((parseFloat(lg.qtd)||0) * (parseFloat(lg.unit)||0)) : 0;
+    totLogistica += sub;
+    const el = document.getElementById(`m_lg_t_${i}`);
+    if (el) el.innerText = fmtBRL(sub);
+  });
+
+  // Etapas e Mão de Obra
+  let totHoras = 0, totCustoMO = 0;
+  const hEtapas = [];
+  state.etapas.forEach((et, i) => {
+    const h = et.ativo ? ((areaTotal / Math.max(0.1, parseFloat(et.prod)||1)) * fatAcesso * fatSev) : 0;
+    const c = h * valorHora;
+    hEtapas.push(h);
+    totHoras += h;
+    totCustoMO += c;
+    if (document.getElementById(`m_et_h_${i}`)) {
+      document.getElementById(`m_et_h_${i}`).innerText = `${fmtNum(h, 2)}h`;
+      document.getElementById(`m_et_c_${i}`).innerText = fmtBRL(c);
+    }
+  });
+
+  const cdv = totCustoMO + totProdCusto + totLogistica;
+  const pImp = (parseFloat(document.getElementById('inp_impostos').value)||0)/100;
+  const pCom = (parseFloat(document.getElementById('inp_comissao').value)||0)/100;
+  const pDesc = (parseFloat(document.getElementById('inp_desconto').value)||0)/100;
+  const pLuc = (parseFloat(document.getElementById('inp_lucro').value)||0)/100;
+
+  const taxas = pImp + pCom + pDesc;
+  const divisor = Math.max(0.05, 1 - (taxas + pLuc));
+  const divisorPiso = Math.max(0.05, 1 - taxas);
+
+  const pv = (cdv * fatEscala) / divisor;
+  const pvM2 = areaTotal > 0 ? pv / areaTotal : 0;
+  const piso = (cdv * fatEscala) / divisorPiso;
+  const pisoM2 = areaTotal > 0 ? piso / areaTotal : 0;
+
+  const valTaxas = pv * taxas;
+  const lucroLiq = pv - cdv - valTaxas;
+  const mc = totCustoMO + lucroLiq;
+  const cobFixo = custoFixoTotal > 0 ? (mc / custoFixoTotal)*100 : 0;
+  const diasObra = (horasDia * tecnicosObra) > 0 ? totHoras / (horasDia * tecnicosObra) : 0;
+
+  // Atualizar Banner e KPIs
+  document.getElementById('top_preco_final').innerText = fmtBRL(pv);
+  document.getElementById('top_preco_m2').innerText = `${fmtBRL(pvM2)}/m²`;
+  document.getElementById('top_preco_piso').innerText = `Piso: ${fmtBRL(piso)}`;
+
+  document.getElementById('kpi_pv').innerText = fmtBRL(pv);
+  document.getElementById('kpi_pv_m2').innerText = `${fmtBRL(pvM2)} / m²`;
+  document.getElementById('kpi_piso').innerText = fmtBRL(piso);
+  document.getElementById('kpi_piso_m2').innerText = `${fmtBRL(pisoM2)} / m²`;
+  document.getElementById('kpi_cdv').innerText = fmtBRL(cdv);
+  document.getElementById('kpi_cdv_m2').innerText = `${fmtBRL(areaTotal > 0 ? cdv/areaTotal : 0)} / m²`;
+  document.getElementById('kpi_mc').innerText = fmtBRL(mc);
+  document.getElementById('kpi_mc_cob').innerText = `${fmtNum(cobFixo, 1)}% do Custo Fixo`;
+  document.getElementById('kpi_lucro').innerText = fmtBRL(lucroLiq);
+  document.getElementById('kpi_lucro_pct').innerText = `${fmtNum(pv > 0 ? (lucroLiq/pv)*100 : 0, 1)}% Líquido`;
+  document.getElementById('kpi_horas').innerText = `${fmtNum(totHoras, 2)} h`;
+  document.getElementById('kpi_dias').innerText = `${fmtNum(diasObra, 1)} dias • ${fmtBRL(valorHora)}/h`;
+
+  // Barra Empilhada
+  const sMO = pv > 0 ? (totCustoMO/pv)*100 : 0;
+  const sMP = pv > 0 ? (totProdCusto/pv)*100 : 0;
+  const sLg = pv > 0 ? (totLogistica/pv)*100 : 0;
+  const sTx = pv > 0 ? (valTaxas/pv)*100 : 0;
+  const sLc = Math.max(0, 100 - (sMO+sMP+sLg+sTx));
+
+  const setBar = (id, pct) => {
+    const el = document.getElementById(id);
+    el.style.width = `${pct}%`;
+    el.innerText = pct > 6 ? `${fmtNum(pct,0)}%` : '';
+  };
+  setBar('seg_mo', sMO); setBar('seg_mp', sMP); setBar('seg_terc', sLg); setBar('seg_imp', sTx); setBar('seg_lucro', sLc);
+
+  document.getElementById('leg_mo').innerText = fmtBRL(totCustoMO);
+  document.getElementById('leg_mp').innerText = fmtBRL(totProdCusto);
+  document.getElementById('leg_terc').innerText = fmtBRL(totLogistica);
+  document.getElementById('leg_imp').innerText = fmtBRL(valTaxas);
+  document.getElementById('leg_lucro').innerText = fmtBRL(lucroLiq);
+
+  // Gráfico de Etapas
+  const stBox = document.getElementById('stages_chart_box');
+  stBox.innerHTML = '';
+  const colors = ['#2e86c1', '#17a589', '#1b4f72', '#f39c12'];
+  state.etapas.forEach((et, i) => {
+    const w = totHoras > 0 ? (hEtapas[i]/totHoras) : 0;
+    const rec = pv * w;
+    stBox.innerHTML += `
+      <div style="margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.78rem; font-weight:700; margin-bottom:2px;">
+          <span>${et.nome}</span>
+          <span>${fmtBRL(rec)} (${fmtNum(w*100,1)}% | ${fmtNum(hEtapas[i],1)}h)</span>
+        </div>
+        <div style="height:14px; background:#eaecee; border-radius:4px; overflow:hidden;">
+          <div style="height:100%; width:${et.ativo ? w*100 : 0}%; background:${colors[i%colors.length]}"></div>
+        </div>
+      </div>`;
+  });
+
+  // Gerar Texto WhatsApp
+  const op1 = pv * 0.38;
+  const op2 = pv;
+  const op3 = pv * 1.30;
+  const textoWA =
+`*PROPOSTA TÉCNICA — REVITALIZAÇÃO DE FACHADA*
+📍 *Cliente/Obra:* ${cliente}
+📐 *Área Total:* ${fmtNum(areaTotal, 1)} m²
+⏱ *Prazo Estimado:* ${fmtNum(Math.ceil(diasObra), 0)} dias úteis (${tecnicosObra} técnicos)
+
+*OPÇÕES DE INVESTIMENTO:*
+1️⃣ *Opção 1 — Descontaminação Técnica:* ${fmtBRL(op1)}
+   _(Lavagem profunda + remoção mineral + hidro-repelência 30d)_
+
+2️⃣ *Opção 2 — Revitalização Completa + Proteção UV (Recomendado):* *${fmtBRL(op2)}* (${fmtBRL(pvM2)}/m²)
+   _(Descontaminação + Restauração Microabrasiva de Cor/Brilho ACM + Proteção UV 12 meses)_
+
+3️⃣ *Opção 3 — Turnkey + Manutenção Anual (SLA):* ${fmtBRL(op3)}
+   _(Escopo Completo + Nano-Vitrificação + 2 Lavagens Semestrais + Garantia 24 meses)_
+
+💳 *Condições (Opção 2):*
+• Sinal de Mobilização (40%): ${fmtBRL(op2 * 0.40)}
+• Entrega Intermediária (30%): ${fmtBRL(op2 * 0.30)}
+• Entrega Final (30%): ${fmtBRL(op2 * 0.30)}`;
+
+  document.getElementById('wa_preview').value = textoWA;
+}
+
+function setChemicalPreset(mode) {
+  if (mode === 'original_266') {
+    state.produtos = JSON.parse(JSON.stringify(DEFAULT_STATE.produtos));
+  } else if (mode === 'kit_padrao_7') {
+    state.produtos = [
+      { ativo: true, nome: "Revelax", cod: "RVX", emb: 500, preco: 40.00, rend: 8.0 },
+      { ativo: true, nome: "Blend All in One", cod: "BLD", emb: 500, preco: 120.00, rend: 2.0 },
+      { ativo: true, nome: "V-Floc", cod: "FLC", emb: 500, preco: 60.00, rend: 2.0 },
+      { ativo: true, nome: "Pluri Mol", cod: "MOL", emb: 500, preco: 60.00, rend: 1.0 },
+      { ativo: true, nome: "Blend Paste Wax", cod: "BPW", emb: 100, preco: 120.00, rend: 0.5 },
+      { ativo: false, nome: "CMX Mother's", cod: "CMX", emb: 710, preco: 300.00, rend: 3.55 },
+      { ativo: true, nome: "Delete", cod: "DLT", emb: 500, preco: 60.00, rend: 3.0 },
+      { ativo: false, nome: "Hydro2", cod: "HY2", emb: 1000, preco: 800.00, rend: 2.0 },
+      { ativo: true, nome: "Fast Cut", cod: "FCT", emb: 1000, preco: 60.00, rend: 2.0 }
+    ];
+  } else if (mode === 'todos_9') {
+    setChemicalPreset('kit_padrao_7');
+    state.produtos.forEach(p => p.ativo = true);
+  }
+  renderLists();
+  recalcAll();
+}
+
+function addStageRow() { state.etapas.push({ ativo: true, nome: "Nova Etapa", prod: 10.0 }); renderLists(); recalcAll(); }
+function addLogisticsRow() { state.logistica.push({ ativo: true, nome: "Item Extra Logística", qtd: 1, unit: 200.0 }); renderLists(); recalcAll(); }
+function addProductRow() { state.produtos.push({ ativo: true, nome: "Novo Químico", cod: "NV", emb: 500, preco: 80.0, rend: 2.0 }); renderLists(); recalcAll(); }
+function addSalaryRow() { state.salarios.push({ nome: "Novo Operador", valor: 2000 }); renderLists(); recalcAll(); }
+function addExpenseRow() { state.despesas.push({ nome: "Nova Despesa", valor: 100 }); renderLists(); recalcAll(); }
+function addEquipRow() { state.equipamentos.push({ nome: "Novo Equipamento", compra: 1000, vida: 36 }); renderLists(); recalcAll(); }
+
+function resetToOriginalSpreadsheet() {
+  state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  document.getElementById('inp_cliente').value = state.cliente;
+  document.getElementById('inp_qtd_mod').value = state.qtd_mod;
+  document.getElementById('sl_qtd_mod').value = state.qtd_mod;
+  document.getElementById('inp_area_unit').value = state.area_unit;
+  document.getElementById('sl_area_unit').value = state.area_unit;
+  document.getElementById('inp_horas_dia').value = state.horas_dia;
+  document.getElementById('sl_horas_dia').value = state.horas_dia;
+  document.getElementById('inp_tecnicos_obra').value = state.tecnicos_obra;
+  document.getElementById('sl_tecnicos_obra').value = state.tecnicos_obra;
+  document.getElementById('inp_fat_acesso').value = state.fat_acesso.toFixed(2);
+  document.getElementById('sl_fat_acesso').value = state.fat_acesso;
+  document.getElementById('inp_fat_sev').value = state.fat_sev.toFixed(2);
+  document.getElementById('sl_fat_sev').value = state.fat_sev;
+  document.getElementById('inp_fat_quim').value = state.fat_quim.toFixed(2);
+  document.getElementById('inp_fat_escala').value = state.fat_escala.toFixed(2);
+  document.getElementById('sl_fat_escala').value = state.fat_escala;
+  document.getElementById('chk_escala_auto').checked = false;
+  document.getElementById('inp_impostos').value = state.impostos;
+  document.getElementById('sl_impostos').value = state.impostos;
+  document.getElementById('inp_comissao').value = state.comissao;
+  document.getElementById('sl_comissao').value = state.comissao;
+  document.getElementById('inp_desconto').value = state.desconto;
+  document.getElementById('sl_desconto').value = state.desconto;
+  document.getElementById('inp_lucro').value = state.lucro;
+  document.getElementById('sl_lucro').value = state.lucro;
+  document.getElementById('chk_vh_manual').checked = false;
+  renderLists();
+  recalcAll();
+}
+
+function shareWhatsApp() {
+  const txt = document.getElementById('wa_preview').value;
+  if (navigator.share) {
+    navigator.share({ title: 'Proposta Revitalização', text: txt }).catch(() => {});
+  } else {
+    window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+  }
+}
+
+function copyProposalText() {
+  const el = document.getElementById('wa_preview');
+  el.select();
+  navigator.clipboard.writeText(el.value);
+  alert('Proposta copiada para a área de transferência!');
+}
+
+function saveCurrentToHistory() {
+  const hist = JSON.parse(localStorage.getItem('luster_android_hist') || '[]');
+  const cliente = document.getElementById('inp_cliente').value || 'Orçamento';
+  const pv = document.getElementById('top_preco_final').innerText;
+  const area = document.getElementById('lbl_area_total').innerText;
+  hist.unshift({
+    data: new Date().toLocaleString('pt-BR'),
+    cliente,
+    pv,
+    area
+  });
+  localStorage.setItem('luster_android_hist', JSON.stringify(hist.slice(0, 15)));
+  renderHistory();
+  alert('Orçamento salvo no histórico do aparelho!');
+}
+
+function renderHistory() {
+  const hist = JSON.parse(localStorage.getItem('luster_android_hist') || '[]');
+  const box = document.getElementById('saved_history_list');
+  if (!hist.length) return;
+  box.innerHTML = hist.map(h => `
+    <div style="padding:8px 0; border-bottom:1px solid #ebedef; display:flex; justify-content:space-between;">
+      <div><strong>${h.cliente}</strong><br><small>${h.area} • ${h.data}</small></div>
+      <div style="font-weight:800; color:var(--success);">${h.pv}</div>
+    </div>
+  `).join('');
+}
+
+window.onload = function() {
+  renderLists();
+  recalcAll();
+  renderHistory();
+};
+</script>
+</body>
+</html>
